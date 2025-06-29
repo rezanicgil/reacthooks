@@ -1,23 +1,28 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 function App() {
-  const [count, setCount] = useState(4);
-  const [theme, setTheme] = useState('blue');
 
-  function decrementCount() {
-    setCount(prevCount => prevCount - 1);
-  }
+  const [resourceType, setResourceType] = useState('posts');
+  const [items, setItems] = useState([]);
 
-  function incrementCount() {
-    setCount(prevCount => prevCount + 1);
-    setTheme('red');
-  }
+  useEffect(() => {
+    fetch(`https://jsonplaceholder.typicode.com/${resourceType}`)
+      .then(response => response.json())
+      .then(data => setItems(data));
+  }, [resourceType]);
 
   return (
     <>
-      <button onClick={decrementCount}>-</button>
-      <span>{count}</span>
-      <span>{theme}</span>
-      <button onClick={incrementCount}>+</button>
+      <div>
+        <button onClick= {() => setResourceType('posts')}>Posts</button>
+        <button onClick= {() => setResourceType('users')}>Users</button>
+        <button onClick= {() => setResourceType('comments')}>Comments</button>
+      </div> 
+      <h1>{resourceType}</h1>
+      {
+        items.map(item => (
+          <pre key={item.id}>{JSON.stringify(item, null, 2)}</pre>
+        ))
+      }
    </>
   );
 }
